@@ -2,6 +2,9 @@
 Input: a List of integers as well as an integer `k` representing the size of the sliding window
 Returns: a List of integers
 '''
+
+from collections import deque
+
 def sliding_window_max(nums, k):
     ''' FIRST PASS SOLUTION '''
 
@@ -25,22 +28,28 @@ def sliding_window_max(nums, k):
 
     ''' WRITING BETTER SOLUTIONS '''
 
+    # Setup result list to hold max values and a deque
     result = []
+    dq = deque()
 
-    # Loop through nums using enumerate to get index at each element
-    for idx,e in enumerate(nums):
-        # Create temp list for nums sliced between index and index + k
-        temp_list = nums[idx:idx + k]
+    # Loop through nums list
+    for i, num in enumerate(nums):
+        # While the element in nums at the last dq index is smaller than the current num, remove it from the deque
+        while dq and nums[dq[-1]] < num:
+            dq.pop()
 
-        # If len(temp_list) < k, break loop
-        if len(temp_list) < k:
-            break
-        # Else, find max from that list and append to result list
-        else:
-            max_value = max(temp_list)
-            result.append(max_value)
+        # If the current index minus the first deque index is greater than k, remove the first element since it's out of range for the slide    
+        if dq and i - dq[0] >= k:
+            dq.popleft()
 
-    return result
+        # Add index to the deque list    
+        dq.append(i)
+
+        # Append the first deque index to the results list
+        result.append(nums[dq[0]])
+
+    # Return the result list starting at k - 1
+    return result[k - 1:]
 
 if __name__ == '__main__':
     # Use the main function here to test out your implementation 
